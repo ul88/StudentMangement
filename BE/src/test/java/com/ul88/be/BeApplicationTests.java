@@ -2,7 +2,7 @@ package com.ul88.be;
 
 import com.ul88.be.dto.ProblemDto;
 import com.ul88.be.dto.RequestSaveStudentDto;
-import com.ul88.be.dto.WorkbookDto;
+import com.ul88.be.dto.RequestUpdateWorkbookDto;
 import com.ul88.be.service.ManagementService;
 import com.ul88.be.service.ProblemService;
 import com.ul88.be.service.StudentService;
@@ -48,7 +48,7 @@ class BeApplicationTests {
 
     @Test
     void findStudentProblems(){
-        System.out.println(problemService.getStudentInProblems(1L));
+        System.out.println(problemService.getProblemsInStudent(1L));
     }
 
     @Test
@@ -58,7 +58,7 @@ class BeApplicationTests {
         problemList.add(problemService.getProblem(1001));
 
         /*workbookService.addWorkbook("문제집1");*/
-        workbookService.updateWorkbook(WorkbookDto.builder()
+        workbookService.updateWorkbook(RequestUpdateWorkbookDto.builder()
                         .id(1L)
                         .name("문제집1")
                         .problems(problemList)

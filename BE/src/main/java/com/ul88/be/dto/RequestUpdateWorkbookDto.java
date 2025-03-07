@@ -1,6 +1,5 @@
 package com.ul88.be.dto;
 
-import com.ul88.be.entity.Problem;
 import com.ul88.be.entity.Workbook;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkbookDto {
+public class RequestUpdateWorkbookDto {
     private Long id;
     private String name;
     private List<ProblemDto> problems;
@@ -27,8 +26,8 @@ public class WorkbookDto {
                 .build();
     }
 
-    public static WorkbookDto fromEntity(Workbook dto) {
-        return WorkbookDto.builder()
+    public static RequestUpdateWorkbookDto fromEntity(Workbook dto) {
+        return RequestUpdateWorkbookDto.builder()
                 .id(dto.getId())
                 .name(dto.getName())
                 .problems(dto.getProblems().stream().map(ProblemDto::fromEntity).collect(Collectors.toList()))

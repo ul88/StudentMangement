@@ -1,7 +1,8 @@
 package com.ul88.be.service;
 
 import com.ul88.be.dto.ProblemDto;
-import com.ul88.be.dto.WorkbookDto;
+import com.ul88.be.dto.RequestUpdateWorkbookDto;
+import com.ul88.be.dto.ResponseWorkbookDto;
 import com.ul88.be.entity.Workbook;
 import com.ul88.be.exception.CustomException;
 import com.ul88.be.exception.ErrorCode;
@@ -33,15 +34,15 @@ public class WorkbookService {
     }
 
     @Transactional
-    public void updateWorkbook(WorkbookDto workbookDto){
-        Workbook entity = workbookRepository.findById(workbookDto.getId()).orElseThrow(() ->
+    public void updateWorkbook(RequestUpdateWorkbookDto requestUpdateWorkbookDto){
+        Workbook entity = workbookRepository.findById(requestUpdateWorkbookDto.getId()).orElseThrow(() ->
                 new CustomException(ErrorCode.PK_NOT_FOUND));
 
-        if(workbookDto.getName() != null){
-            entity.changeName(workbookDto.getName());
+        if(requestUpdateWorkbookDto.getName() != null){
+            entity.changeName(requestUpdateWorkbookDto.getName());
         }
-        if(!workbookDto.getProblems().isEmpty()){
-            for(ProblemDto problem : workbookDto.getProblems()){
+        if(!requestUpdateWorkbookDto.getProblems().isEmpty()){
+            for(ProblemDto problem : requestUpdateWorkbookDto.getProblems()){
                 entity.addProblem(problemService.getProblem(problem.getId()).toEntity());
             }
         }
@@ -49,12 +50,9 @@ public class WorkbookService {
         workbookRepository.save(entity);
     }
 
-    public List<WorkbookDto> getWorkbooks(){
+    public List<ResponseWorkbookDto> getWorkbooks(){
         return workbookRepository.findAll().stream()
-                .map(WorkbookDto::fromEntity).collect(Collectors.toList());
+                .map(ResponseWorkbookDto::fromEntity).collect(Collectors.toList());
     }
 
-    public List<ProblemDto> getWorkbookInProblems(Long id){
-        return problemService.getWorkbookInProblems(id);
-    }
 }

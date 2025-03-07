@@ -16,6 +16,7 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -58,13 +59,18 @@ public class ProblemService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProblemDto> getStudentInProblems(Long id){
+    public List<ProblemDto> getProblemsInStudent(Long id){
         return problemRepository.findByStudentId(id).stream()
                 .map(ProblemDto::fromEntity).collect(Collectors.toList());
     }
 
-    public List<ProblemDto> getWorkbookInProblems(Long id){
+    public List<ProblemDto> getProblemsInWorkbook(Long id){
         return problemRepository.findByWorkbookId(id).stream()
+                .map(ProblemDto::fromEntity).collect(Collectors.toList());
+    }
+
+    public List<ProblemDto> getStudentSolvedProblemsInWorkbook(Long studentId, Long workbookId){
+        return problemRepository.findByStudentIdAndWorkbookId(studentId,workbookId).stream()
                 .map(ProblemDto::fromEntity).collect(Collectors.toList());
     }
 
