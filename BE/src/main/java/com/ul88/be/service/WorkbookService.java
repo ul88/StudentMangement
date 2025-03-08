@@ -43,7 +43,7 @@ public class WorkbookService {
         }
         if(!requestUpdateWorkbookDto.getProblems().isEmpty()){
             for(ProblemDto problem : requestUpdateWorkbookDto.getProblems()){
-                entity.addProblem(problemService.getProblem(problem.getId()).toEntity());
+//                entity.addProblem(problemService.getProblem(problem.getId()).toEntity());
             }
         }
 

@@ -10,15 +10,4 @@ import java.util.List;
 
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, Integer> {
-    @Query(value = "SELECT * FROM problem WHERE student_id = :id"
-            ,nativeQuery = true)
-    List<Problem> findByStudentId(Long id);
-
-    @Query(value = "SELECT * FROM problem WHERE workbook_id = :id"
-            ,nativeQuery = true)
-    List<Problem> findByWorkbookId(Long id);
-
-    @Query(value = "SELECT * FROM problem WHERE student_id = :studentId AND workbook_id = :workbookId"
-            ,nativeQuery = true)
-    List<Problem> findByStudentIdAndWorkbookId(Long studentId, Long workbookId);
 }

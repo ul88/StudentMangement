@@ -59,22 +59,7 @@ public class ProblemService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProblemDto> getProblemsInStudent(Long id){
-        return problemRepository.findByStudentId(id).stream()
-                .map(ProblemDto::fromEntity).collect(Collectors.toList());
-    }
-
-    public List<ProblemDto> getProblemsInWorkbook(Long id){
-        return problemRepository.findByWorkbookId(id).stream()
-                .map(ProblemDto::fromEntity).collect(Collectors.toList());
-    }
-
-    public List<ProblemDto> getStudentSolvedProblemsInWorkbook(Long studentId, Long workbookId){
-        return problemRepository.findByStudentIdAndWorkbookId(studentId,workbookId).stream()
-                .map(ProblemDto::fromEntity).collect(Collectors.toList());
-    }
-
-    public List<ProblemDto> parsingSolvedAc(String bojId) throws IOException {
+    public List<Problem> parsingSolvedAc(String bojId) throws IOException {
         String url = prefixUrl + bojId;
 
         RestClient restClient = RestClient.create();
@@ -104,7 +89,7 @@ public class ProblemService {
 
         problemRepository.saveAll(problemList);
 
-        return problemList.stream().map(ProblemDto::fromEntity).collect(Collectors.toList());
+        return problemList;
     }
 
     private Problem checkEXISTSProblem(Integer id){

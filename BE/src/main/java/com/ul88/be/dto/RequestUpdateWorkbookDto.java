@@ -22,7 +22,6 @@ public class RequestUpdateWorkbookDto {
         return Workbook.builder()
                 .id(id)
                 .name(name)
-                .problems(problems.stream().map(ProblemDto::toEntity).collect(Collectors.toList()))
                 .build();
     }
 
@@ -30,7 +29,6 @@ public class RequestUpdateWorkbookDto {
         return RequestUpdateWorkbookDto.builder()
                 .id(dto.getId())
                 .name(dto.getName())
-                .problems(dto.getProblems().stream().map(ProblemDto::fromEntity).collect(Collectors.toList()))
                 .build();
     }
 }

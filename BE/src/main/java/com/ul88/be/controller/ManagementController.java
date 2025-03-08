@@ -15,6 +15,11 @@ import java.io.IOException;
 public class ManagementController {
     private final ManagementService managementService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> get(@PathVariable("id") Long id){
+        return ResponseEntity.ok(managementService.getSolvedProblemsByStudent(id));
+    }
+
     @PostMapping("/{id}")
     public ResponseEntity<?> renew(@PathVariable("id") Long id) throws IOException {
         managementService.renewStudent(id);

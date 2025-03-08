@@ -16,18 +16,8 @@ import java.util.List;
 public class ProblemController {
     private final ProblemService problemService;
 
-    @GetMapping // student id
-    public ResponseEntity<List<ProblemDto>> getProblemSameStudentId(@RequestParam(value = "studentId", required = false) Long studentId,
-                                                                    @RequestParam(value = "workbookId", required = false) Long workbookId){
-        log.info(studentId + " " + workbookId);
-        if(studentId != null && workbookId != null){
-            return ResponseEntity.ok(problemService.getStudentSolvedProblemsInWorkbook(studentId, workbookId));
-        }else if(studentId != null){
-            return ResponseEntity.ok(problemService.getProblemsInStudent(studentId));
-        }else if(workbookId != null){
-            return ResponseEntity.ok(problemService.getProblemsInWorkbook(workbookId));
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProblemDto> getProblem(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(problemService.getProblem(id));
     }
 }

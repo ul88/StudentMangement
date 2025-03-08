@@ -20,16 +20,10 @@ public class Workbook {
     private Long id;
     private String name;
 
-    @OneToMany
-    @Builder.Default
-    @JoinColumn(name = "workbook_id")
-    private List<Problem> problems = new ArrayList<>();
+//    @OneToMany(mappedBy = "workbook")
+//    private List<ProblemInWorkbook> problems = new ArrayList<>();
 
     public void changeName(String name) {
         this.name = name;
-    }
-
-    public void addProblem(Problem problem) {
-        problems.add(problem);
     }
 }
