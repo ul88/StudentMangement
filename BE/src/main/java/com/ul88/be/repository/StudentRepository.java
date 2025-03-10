@@ -14,6 +14,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findByName(String name);
 
     @Query("select s from Student s where s.bojId = :bojId")
-    @EntityGraph(attributePaths = {"Management"})
+    @EntityGraph(attributePaths = {"managements"})
     Optional<Student> findWithProblemsByBojId(String bojId);
 }

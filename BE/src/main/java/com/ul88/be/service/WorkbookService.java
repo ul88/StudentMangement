@@ -2,7 +2,9 @@ package com.ul88.be.service;
 
 import com.ul88.be.dto.ProblemDto;
 import com.ul88.be.dto.RequestUpdateWorkbookDto;
-import com.ul88.be.dto.ResponseWorkbookDto;
+import com.ul88.be.dto.WorkbookDto;
+import com.ul88.be.entity.Problem;
+import com.ul88.be.entity.ProblemInWorkbook;
 import com.ul88.be.entity.Workbook;
 import com.ul88.be.exception.CustomException;
 import com.ul88.be.exception.ErrorCode;
@@ -22,11 +24,6 @@ public class WorkbookService {
     private final WorkbookRepository workbookRepository;
     private final ProblemService problemService;
 
-
-    public void equalWorkbookAndProblem(){
-
-    }
-
     public void addWorkbook(String name){
         workbookRepository.save(Workbook.builder()
                         .name(name)
@@ -37,22 +34,29 @@ public class WorkbookService {
     public void updateWorkbook(RequestUpdateWorkbookDto requestUpdateWorkbookDto){
         Workbook entity = workbookRepository.findById(requestUpdateWorkbookDto.getId()).orElseThrow(() ->
                 new CustomException(ErrorCode.PK_NOT_FOUND));
-
         if(requestUpdateWorkbookDto.getName() != null){
             entity.changeName(requestUpdateWorkbookDto.getName());
         }
-        if(!requestUpdateWorkbookDto.getProblems().isEmpty()){
-            for(ProblemDto problem : requestUpdateWorkbookDto.getProblems()){
-//                entity.addProblem(problemService.getProblem(problem.getId()).toEntity());
-            }
-        }
+        problemService.getProblems(requestUpdateWorkbookDto.getProblemId()).forEach(problem -> {
+            entity.addProblem(problem.toEntity());
+        });
 
         workbookRepository.save(entity);
     }
 
-    public List<ResponseWorkbookDto> getWorkbooks(){
+    public List<WorkbookDto> getWorkbooks(){
         return workbookRepository.findAll().stream()
-                .map(ResponseWorkbookDto::fromEntity).collect(Collectors.toList());
+                .map(WorkbookDto::fromEntity).toList();
     }
 
+    public WorkbookDto getWorkbook(Long id){
+        Workbook workbook = workbookRepository.findById(id).orElseThrow(() ->
+                new CustomException(ErrorCode.PK_NOT_FOUND));
+        return WorkbookDto.fromEntity(workbook);
+    }
+
+    public List<ProblemDto> getProblemsInWorkbook(Long id){
+        List<Problem> problemList = workbookRepository.findProblemByWorkbook(id);
+        return problemList.stream().map(ProblemDto::fromEntity).toList();
+    }
 }

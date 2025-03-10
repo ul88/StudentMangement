@@ -20,10 +20,21 @@ public class Workbook {
     private Long id;
     private String name;
 
-//    @OneToMany(mappedBy = "workbook")
-//    private List<ProblemInWorkbook> problems = new ArrayList<>();
+    @OneToMany(mappedBy = "workbook",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    @Builder.Default
+    private List<ProblemInWorkbook> problems = new ArrayList<>();
 
     public void changeName(String name) {
         this.name = name;
+    }
+
+    public void addProblem(Problem problem) {
+        problems.add(ProblemInWorkbook.builder()
+                .workbook(this)
+                .problem(problem)
+                .build());
     }
 }

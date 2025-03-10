@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class RequestUpdateWorkbookDto {
     private Long id;
     private String name;
-    private List<ProblemDto> problems;
+    private List<Integer> problemId;
 
     public Workbook toEntity(){
         return Workbook.builder()

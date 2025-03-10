@@ -1,18 +1,17 @@
 package com.ul88.be.dto;
 
+import com.ul88.be.entity.Workbook;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ResponseWorkbookDto {
+@AllArgsConstructor
+public class ProblemInWorkbookDto {
     private Long id;
-    private String name;
-    private List<ProblemDto> problems;
+    private ProblemDto problem;
+    private WorkbookDto workbook;
 }

@@ -1,10 +1,7 @@
 package com.ul88.be.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +12,8 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +24,9 @@ public class Student {
 
     @Column(name="boj_id", unique = true, nullable = false)
     private String bojId;
+
+    @OneToMany(mappedBy = "student")
+    private List<Management> managements;
 
     private String birth;
     public void changeName(String name) {

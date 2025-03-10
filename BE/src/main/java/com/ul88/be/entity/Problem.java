@@ -11,6 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@EqualsAndHashCode
+@ToString
 public class Problem {
     @Id
     private Integer id;
@@ -19,4 +21,10 @@ public class Problem {
     @Enumerated(value = EnumType.STRING)
     @Builder.Default
     private ProblemLevel level = ProblemLevel.Unrated;
+
+    @OneToMany(mappedBy = "problem",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<Management> managementList = new ArrayList<>();
 }

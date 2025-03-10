@@ -17,7 +17,7 @@ public class ProblemController {
     private final ProblemService problemService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProblemDto> getProblem(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(problemService.getProblem(id));
+    public ResponseEntity<?> getStudents(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(problemService.getStudents(id));
     }
 }

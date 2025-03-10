@@ -25,9 +25,9 @@ public class StudentController {
     }
 
     @PostMapping // 입력
-    public ResponseEntity<RequestSaveStudentDto> saveStudent(@RequestBody RequestSaveStudentDto studentDto) {
+    public ResponseEntity<?> saveStudent(@RequestBody RequestSaveStudentDto studentDto) {
         studentService.saveStudent(studentDto);
-        return ResponseEntity.ok().body(studentDto);
+        return ResponseEntity.ok().body("success");
     }
 
     @PutMapping

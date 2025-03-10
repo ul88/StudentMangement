@@ -7,6 +7,7 @@ import com.ul88.be.entity.Problem;
 import com.ul88.be.entity.ProblemLevel;
 import com.ul88.be.entity.Management;
 import com.ul88.be.entity.Student;
+import com.ul88.be.repository.JdbcProblemRepository;
 import com.ul88.be.repository.ProblemRepository;
 import com.ul88.be.repository.ManagementRepository;
 import com.ul88.be.repository.StudentRepository;
@@ -39,65 +40,31 @@ class BeApplicationTests {
     private ProblemService problemService;
 
     @Autowired
+    private JdbcProblemRepository jdbcProblemRepository;
+
+    @Autowired
     private WorkbookService workbookService;
     @Autowired
     private ProblemRepository problemRepository;
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
-    private ManagementRepository solvedRepository;
+    private ManagementRepository managementRepository;
 
     @Test
-    void parsing() throws IOException {
-        studentService.saveStudent(RequestSaveStudentDto.builder()
-                        .name("김한울2")
-                        .bojId("aca1234")
-                        .birth("040830")
-                .build());
-        managementService.renewStudent(2L);
-    }
-
-
-    @Test
-    void findStudent(){
-        System.out.println(studentService.getStudent(1L).getName());
+    void joinTest(){
+        List<Student> m = managementRepository.findStudentsByProblem(1012);
+        for(Student i : m){
+            System.out.println(i.getName());
+        }
     }
 
     @Test
-    void findStudentProblems(){
-        System.out.println(problemService.getProblemsInStudent(1L));
-    }
-
-    @Test
-    void addWorkbookAndAddProblem(){
-        List<ProblemDto> problemList = new ArrayList<>();
-        problemList.add(problemService.getProblem(1000));
-        problemList.add(problemService.getProblem(1001));
-
-        /*workbookService.addWorkbook("문제집1");*/
-        workbookService.updateWorkbook(RequestUpdateWorkbookDto.builder()
-                        .id(1L)
-                        .name("문제집1")
-                        .problems(problemList)
-                .build());
-    }
-
-
-    @Test
-    void jwtTest(){
-        Map<String, Object> header = new HashMap<>();
-        header.put("typ", "JWT");
-        header.put("alg", "HS256");
-
-        Claims claims = Jwts.claims();
-        claims.put("userId", "admin");
-        claims.put("email", "@gmail.com");
-        claims.put("role", "admin");
-
-        String test = Jwts.builder()
-                .setHeader(header)
-
-                .compact();
+    void findByproblemId(){
+        Problem p = problemRepository.findById(1012).orElseThrow();
+        for(Management m : p.getManagementList()){
+            System.out.println(m.getStudent().getName() + " " + m.getProblem().getName());
+        }
     }
 
     @Test
@@ -129,26 +96,40 @@ class BeApplicationTests {
 
         studentRepository.save(student);
         studentRepository.save(student1);
-        solvedRepository.save(Management.builder()
-                        .student(student)
-                        .problem(problem1)
+        managementRepository.save(Management.builder()
+                .student(student)
+                .problem(problem1)
                 .build());
 
-        solvedRepository.save(Management.builder()
-                        .student(student)
-                        .problem(problem2)
+        managementRepository.save(Management.builder()
+                .student(student)
+                .problem(problem2)
                 .build());
-        solvedRepository.save(Management.builder()
+        managementRepository.save(Management.builder()
                 .student(student)
                 .problem(problem2)
                 .build());
 
-        solvedRepository.save(Management.builder()
-                        .student(student1)
+        managementRepository.save(Management.builder()
+                .student(student1)
                 .problem(problem1)
                 .build());
+    }
 
-        studentRepository.deleteById(1L);
-//        solvedRepository.deleteById(1L);
+    @Test
+    void jdbcSaveAllTest(){
+        List<Problem> problems = new ArrayList<>();
+        problems.add(Problem.builder()
+                .id(1111)
+                .name("A+B")
+                .level(ProblemLevel.Bronze1)
+                .build());
+        problems.add(Problem.builder()
+                .id(1112)
+                .name("A+B1")
+                .level(ProblemLevel.Bronze1)
+                .build());
+
+        jdbcProblemRepository.saveAll(problems);
     }
 }

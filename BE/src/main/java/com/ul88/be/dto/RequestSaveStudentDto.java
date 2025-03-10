@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestSaveStudentDto {
+    private Long id;
     private String name;
     private String bojId;
     private String birth;
 
     public Student toEntity(){
         return Student.builder()
+                .id(id)
                 .name(name)
                 .bojId(bojId)
                 .birth(birth)

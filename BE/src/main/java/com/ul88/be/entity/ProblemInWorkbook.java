@@ -19,11 +19,9 @@ public class ProblemInWorkbook {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "workbook_id")
     private Workbook workbook;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "problem_id")
     private Problem problem;
 }
