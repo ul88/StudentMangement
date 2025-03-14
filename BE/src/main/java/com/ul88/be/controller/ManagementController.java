@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/management")
@@ -15,9 +16,18 @@ import java.io.IOException;
 public class ManagementController {
     private final ManagementService managementService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable("id") Long id){
-        return ResponseEntity.ok(managementService.getSolvedProblemsByStudent(id));
+    @GetMapping("")
+    public ResponseEntity<?> get(@RequestParam("workbookId") Long workbookId,
+                                 @RequestParam(value = "studentId", required = false) List<Long> studentIdList) {
+        if(studentIdList == null){
+            return ResponseEntity.ok(
+                    managementService.getProblemListSolvedInWorkbookCheckAll(workbookId)
+            );
+        }else{
+            return ResponseEntity.ok(
+                    managementService.getProblemListSolvedInWorkbookCheckStudents(workbookId, studentIdList)
+            );
+        }
     }
 
     @PostMapping("/{id}")

@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
 @Getter
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 public class RequestUpdateWorkbookDto {
     private Long id;
     private String name;
-    private List<Integer> problemId;
+    private List<Integer> problemList;
 
     public Workbook toEntity(){
         return Workbook.builder()

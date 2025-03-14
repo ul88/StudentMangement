@@ -1,19 +1,14 @@
 package com.ul88.be.controller;
 
+import com.ul88.be.dto.RequestSaveWorkbookDto;
 import com.ul88.be.dto.RequestUpdateWorkbookDto;
 import com.ul88.be.dto.ResponseWorkbookDto;
 import com.ul88.be.dto.WorkbookDto;
-import com.ul88.be.service.ProblemService;
 import com.ul88.be.service.WorkbookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,10 +34,17 @@ public class WorkbookController {
         return ResponseEntity.ok(response);
     }
 
+
+    /*
+    * json {
+    *       "name" : "이름"
+    *       "problemList" : []
+    * }
+    */
     @PostMapping
-    public ResponseEntity<?> createWorkbook(@RequestBody String name) {
-        workbookService.addWorkbook(name);
-        return ResponseEntity.ok(name);
+    public ResponseEntity<?> createWorkbook(@RequestBody RequestSaveWorkbookDto requestSaveWorkbookDto) {
+        workbookService.addWorkbook(requestSaveWorkbookDto);
+        return ResponseEntity.ok(requestSaveWorkbookDto);
     }
 
     @PutMapping

@@ -48,20 +48,15 @@ public class ProblemService {
     }
 
     public List<StudentDto> getStudents(Integer id){
-        Problem problem = problemRepository.findById(id).orElseThrow(() ->
-                new CustomException(ErrorCode.PROBLEM_NOT_FOUND));
-
-        return problem.getManagementList().stream().map(management ->
-            StudentDto.fromEntity(management.getStudent())
-        ).toList();
+        return problemRepository.findStudentsByProblem(id).stream()
+                .map(StudentDto::fromEntity).toList();
     }
 
     public List<Problem> parsingSolvedAc(String bojId) throws IOException {
         String url = prefixUrl + bojId;
 
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(Duration.ofSeconds(5));
-        requestFactory.setReadTimeout(Duration.ofSeconds(5));
+        requestFactory.setReadTimeout(Duration.ofSeconds(30));
 
         RestClient restClient = RestClient.builder()
                 .requestFactory(requestFactory).build();
@@ -98,8 +93,7 @@ public class ProblemService {
 
     private ProblemDto addProblem(Integer id){
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(Duration.ofSeconds(5));
-        requestFactory.setReadTimeout(Duration.ofSeconds(5));
+        requestFactory.setReadTimeout(Duration.ofSeconds(30));
 
         RestClient restClient = RestClient.builder()
                 .requestFactory(requestFactory).build();

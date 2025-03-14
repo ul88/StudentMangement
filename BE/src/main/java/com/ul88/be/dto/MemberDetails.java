@@ -31,7 +31,7 @@ public class MemberDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> auth = new ArrayList<>();
-        auth.add(new SimpleGrantedAuthority("ROLE"+role));
+        auth.add(new SimpleGrantedAuthority("ROLE_"+role));
         return auth;
     }
 
@@ -42,7 +42,7 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return id;
     }
 
     @Override

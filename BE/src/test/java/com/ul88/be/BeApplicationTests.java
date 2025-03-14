@@ -1,8 +1,5 @@
 package com.ul88.be;
 
-import com.ul88.be.dto.ProblemDto;
-import com.ul88.be.dto.RequestSaveStudentDto;
-import com.ul88.be.dto.RequestUpdateWorkbookDto;
 import com.ul88.be.entity.Problem;
 import com.ul88.be.entity.ProblemLevel;
 import com.ul88.be.entity.Management;
@@ -15,17 +12,12 @@ import com.ul88.be.service.ManagementService;
 import com.ul88.be.service.ProblemService;
 import com.ul88.be.service.StudentService;
 import com.ul88.be.service.WorkbookService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest
 class BeApplicationTests {

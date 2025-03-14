@@ -1,10 +1,10 @@
 package com.ul88.be.service;
 
 import com.ul88.be.dto.ProblemDto;
+import com.ul88.be.dto.RequestSaveWorkbookDto;
 import com.ul88.be.dto.RequestUpdateWorkbookDto;
 import com.ul88.be.dto.WorkbookDto;
 import com.ul88.be.entity.Problem;
-import com.ul88.be.entity.ProblemInWorkbook;
 import com.ul88.be.entity.Workbook;
 import com.ul88.be.exception.CustomException;
 import com.ul88.be.exception.ErrorCode;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +23,19 @@ public class WorkbookService {
     private final WorkbookRepository workbookRepository;
     private final ProblemService problemService;
 
-    public void addWorkbook(String name){
-        workbookRepository.save(Workbook.builder()
-                        .name(name)
-                .build());
+    public void addWorkbook(RequestSaveWorkbookDto requestSaveWorkbookDto){
+
+        Workbook workbook = Workbook.builder()
+                .name(requestSaveWorkbookDto.getName())
+                .build();
+
+        if(!requestSaveWorkbookDto.getProblemList().isEmpty()){
+            problemService.getProblems(requestSaveWorkbookDto.getProblemList()).forEach(problem -> {
+                workbook.addProblem(problem.toEntity());
+            });
+        }
+
+        workbookRepository.save(workbook);
     }
 
     @Transactional
@@ -37,7 +45,7 @@ public class WorkbookService {
         if(requestUpdateWorkbookDto.getName() != null){
             entity.changeName(requestUpdateWorkbookDto.getName());
         }
-        problemService.getProblems(requestUpdateWorkbookDto.getProblemId()).forEach(problem -> {
+        problemService.getProblems(requestUpdateWorkbookDto.getProblemList()).forEach(problem -> {
             entity.addProblem(problem.toEntity());
         });
 

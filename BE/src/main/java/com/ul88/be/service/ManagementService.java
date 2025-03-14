@@ -1,6 +1,7 @@
 package com.ul88.be.service;
 
 import com.ul88.be.dto.ProblemDto;
+import com.ul88.be.dto.ResponseSolvedStudents;
 import com.ul88.be.dto.StudentDto;
 import com.ul88.be.entity.Management;
 import com.ul88.be.entity.Problem;
@@ -13,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +33,37 @@ public class ManagementService {
         checkSolved(studentDto);
     }
 
-    public List<ProblemDto> getSolvedProblemsByStudent(Long id) {
-        StudentDto studentDto = studentService.getStudent(id);
+    public List<ResponseSolvedStudents> getProblemListSolvedInWorkbookCheckAll(Long workbookId) {
+        List<ProblemDto> problemList = workbookService.getProblemsInWorkbook(workbookId);
 
-        List<Management> solvedList = managementRepository.findByStudent(studentDto.toEntity());
+        List<ResponseSolvedStudents> response = new ArrayList<>();
+        for(ProblemDto p : problemList) {
+            List<StudentDto> studentList = problemService.getStudents(p.getId());
+            response.add(ResponseSolvedStudents.builder()
+                            .problem(p)
+                            .studentList(studentList)
+                    .build());
+        }
+        return response;
+    }
 
-        return solvedList.stream().map(solved ->
-                        ProblemDto.fromEntity(solved.getProblem()))
-                .toList();
+    public List<ResponseSolvedStudents> getProblemListSolvedInWorkbookCheckStudents(
+            Long workbookId,
+            List<Long> studentIdList
+    ){
+        List<ProblemDto> problemList = workbookService.getProblemsInWorkbook(workbookId);
+
+        List<ResponseSolvedStudents> response = new ArrayList<>();
+        for(ProblemDto p : problemList) {
+            List<StudentDto> studentList =
+                    managementRepository.findByStudentInAndProblem(studentIdList, p.toEntity()).stream()
+                            .map(StudentDto::fromEntity).toList();
+            response.add(ResponseSolvedStudents.builder()
+                    .problem(p)
+                    .studentList(studentList)
+                    .build());
+        }
+        return response;
     }
 
     private void checkSolved(StudentDto studentDto) throws IOException {

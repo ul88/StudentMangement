@@ -14,4 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProblemRepository extends JpaRepository<Problem, Integer> {
+    @Query("select m.student from Problem p join p.managementList m where p.id = :problemId")
+    List<Student> findStudentsByProblem(Integer problemId);
 }
