@@ -24,18 +24,21 @@ import java.util.Map;
 @Log4j2
 @Transactional(readOnly = true)
 public class JwtUtil {
-    public static final String HEADER_NAME = "Authorization";
+    public static final String AUTHORIZATION_PREFIX = "Bearer ";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String SESSION_NAME = "jwt";
     private final Key key;
     private final Long accessExpiration;
     private final Long refreshExpiration;
 
     public JwtUtil(@Value("${jwt.secret}")String secretKey,
-                   @Value("${jwt.expiration_time}") Long expiration) {
-        this.accessExpiration = expiration;
+                   @Value("${jwt.access_token_expiration_time}") Long accessExpiration,
+                   @Value("${jwt.refresh_token_expiration_time}") Long refreshExpiration) {
+        this.accessExpiration = accessExpiration;
+        this.refreshExpiration = refreshExpiration;
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.refreshExpiration = expiration*1000;
     }
 
     public String generateAccessToken(MemberDetails memberDetails) {
@@ -63,6 +66,15 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String getRefreshTokenSubject(String token){
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts
                 .parserBuilder()
@@ -74,7 +86,7 @@ public class JwtUtil {
         auth.add(new SimpleGrantedAuthority(claims.get("roles", String.class)));
         MemberDetails principal = MemberDetails.builder()
                 .id(claims.getSubject())
-                .role(MemberRole.valueOf(claims.get("roles", String.class)))
+                .role(MemberRole.valueOf(claims.get("roles", String.class).substring(5)))
                 .build();
         return new UsernamePasswordAuthenticationToken(principal, token, auth);
     }

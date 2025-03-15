@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
         );
         http.addFilterBefore(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), jwtUtil), LogoutFilter.class);
-//        http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), JwtUsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil,memberDetailsService), JwtUsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
