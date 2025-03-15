@@ -14,8 +14,5 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final MemberService memberService;
-    @PostMapping
-    public ResponseEntity<?> login(@RequestBody MemberDto memberDto) {
-        return ResponseEntity.ok(memberService.login(memberDto));
-    }
+
 }

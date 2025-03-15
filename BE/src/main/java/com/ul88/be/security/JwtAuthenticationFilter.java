@@ -47,7 +47,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String newRefreshToken = jwtUtil.generateRefreshToken(memberDetails);
                 response.setHeader(JwtUtil.AUTHORIZATION_HEADER, JwtUtil.AUTHORIZATION_PREFIX + accessToken);
                 log.info(session.getAttribute(JwtUtil.SESSION_NAME));
+
                 session.setAttribute(JwtUtil.SESSION_NAME, newRefreshToken);
+
+                SecurityContextHolder.getContext().setAuthentication(jwtUtil.getAuthentication(accessToken));
                 log.info(session.getAttribute(JwtUtil.SESSION_NAME));
                 log.info(session);
                 log.info("refresh 토큰을 이용해서 access 토큰 발급");

@@ -48,7 +48,8 @@ public class SecurityConfig {
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
+                .requestMatchers("/api/login").permitAll()
+                .anyRequest().hasAnyRole("ADMIN", "USER")
         );
         http.addFilterBefore(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), jwtUtil), LogoutFilter.class);
         http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil,memberDetailsService), JwtUsernamePasswordAuthenticationFilter.class);
