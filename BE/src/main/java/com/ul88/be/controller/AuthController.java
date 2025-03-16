@@ -15,4 +15,17 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final MemberService memberService;
 
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody MemberDto memberDto) {
+        memberService.signup(memberDto);
+        return ResponseEntity.ok("signup success");
+    }
+
+    @PostMapping("/admin")
+    public ResponseEntity<?> admin(@RequestParam("id") String id,
+                                   @RequestParam(value = "role", defaultValue = "USER") String role) {
+        //id에 맞는 유저의 권한을 USER로 설정
+        memberService.changeRole(id, role);
+        return ResponseEntity.ok("change success");
+    }
 }

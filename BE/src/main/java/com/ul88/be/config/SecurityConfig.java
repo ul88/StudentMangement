@@ -1,6 +1,6 @@
 package com.ul88.be.config;
 
-import com.ul88.be.Jwt.JwtUtil;
+import com.ul88.be.security.JwtUtil;
 import com.ul88.be.security.JwtAuthenticationFilter;
 import com.ul88.be.security.JwtUsernamePasswordAuthenticationFilter;
 import com.ul88.be.service.MemberDetailsService;
@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -19,8 +18,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +27,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 public class SecurityConfig {
     private final MemberDetailsService memberDetailsService;
     private final JwtUtil jwtUtil;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,13 +42,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors(cors -> cors
+                .configurationSource(corsConfigurationSource));
         http.formLogin(AbstractHttpConfigurer::disable);
-        http.cors(AbstractHttpConfigurer::disable);
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/login").permitAll()
+                .requestMatchers("/api/signup").permitAll()
+                .requestMatchers("/api/admin").hasAnyRole("ADMIN")
                 .anyRequest().hasAnyRole("ADMIN", "USER")
         );
         http.addFilterBefore(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), jwtUtil), LogoutFilter.class);

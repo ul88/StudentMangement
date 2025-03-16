@@ -1,11 +1,10 @@
 package com.ul88.be;
 
-import com.ul88.be.Jwt.JwtUtil;
+import com.ul88.be.security.JwtUtil;
 import com.ul88.be.dto.MemberDetails;
 import com.ul88.be.entity.Member;
 import com.ul88.be.entity.MemberRole;
 import com.ul88.be.repository.MemberRepository;
-import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

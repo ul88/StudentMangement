@@ -1,15 +1,14 @@
 package com.ul88.be.security;
 
-import com.ul88.be.Jwt.JwtUtil;
 import com.ul88.be.dto.MemberDetails;
 import com.ul88.be.service.MemberDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,33 +26,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         log.info("jwFilter 시작");
-        String token = request.getHeader(JwtUtil.AUTHORIZATION_HEADER);
-        if (token != null && token.startsWith(JwtUtil.AUTHORIZATION_PREFIX)) {
-            token = token.substring(7).trim();
-        }
-        if (jwtUtil.validateToken(token)) {
-            Authentication authentication = jwtUtil.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("access 토큰이 있으므로 인증 패스");
-        } else {
-            // refresh 토큰으로 확인
-            HttpSession session = request.getSession();
-            String refreshToken = String.valueOf(session.getAttribute(JwtUtil.SESSION_NAME));
-            log.info("refresh token : {}",refreshToken);
-            if(refreshToken != null && jwtUtil.validateToken(refreshToken)) {
-                String subject = jwtUtil.getRefreshTokenSubject(refreshToken);
-                MemberDetails memberDetails = (MemberDetails) memberDetailsService.loadUserByUsername(subject);
-                String accessToken = jwtUtil.generateAccessToken(memberDetails);
-                String newRefreshToken = jwtUtil.generateRefreshToken(memberDetails);
-                response.setHeader(JwtUtil.AUTHORIZATION_HEADER, JwtUtil.AUTHORIZATION_PREFIX + accessToken);
-                log.info(session.getAttribute(JwtUtil.SESSION_NAME));
+        String accessToken = request.getHeader(JwtUtil.ACCESS_TOKEN_HEADER);
+        String refreshToken = request.getHeader(JwtUtil.REFRESH_TOKEN_HEADER);
+        if(refreshToken != null && refreshToken.startsWith(JwtUtil.AUTHORIZATION_PREFIX)) {
+            refreshToken = refreshToken.substring(7).trim();
+            log.info("refresh token을 이용한 검증 시작 {}", refreshToken);
+            if(jwtUtil.validateToken(refreshToken)) {
+                String userId = jwtUtil.getRefreshTokenSubject(refreshToken);
+                MemberDetails member = (MemberDetails) memberDetailsService.loadUserByUsername(userId);
 
-                session.setAttribute(JwtUtil.SESSION_NAME, newRefreshToken);
+                String newAccessToken = JwtUtil.AUTHORIZATION_PREFIX +
+                        jwtUtil.generateAccessToken(member);
+                String newRefreshToken = JwtUtil.AUTHORIZATION_PREFIX +
+                        jwtUtil.generateRefreshToken(member);
 
-                SecurityContextHolder.getContext().setAuthentication(jwtUtil.getAuthentication(accessToken));
-                log.info(session.getAttribute(JwtUtil.SESSION_NAME));
-                log.info(session);
-                log.info("refresh 토큰을 이용해서 access 토큰 발급");
+                Authentication auth = new UsernamePasswordAuthenticationToken(member, "", member.getAuthorities());
+
+                request.setAttribute(JwtUtil.ACCESS_TOKEN_HEADER, newAccessToken);
+                request.setAttribute(JwtUtil.REFRESH_TOKEN_HEADER, newRefreshToken);
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                log.info("refresh token으로 access token 발급 완료");
+            }
+        }else if(accessToken != null && accessToken.startsWith(JwtUtil.AUTHORIZATION_PREFIX)) {
+            accessToken = accessToken.substring(7).trim();
+            log.info("access token을 이용한 검증 시작 {}", accessToken);
+            if(jwtUtil.validateToken(accessToken)) {
+                Authentication auth = jwtUtil.getAuthentication(accessToken);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                String newAccessToken = JwtUtil.AUTHORIZATION_PREFIX +
+                        jwtUtil.generateAccessToken((MemberDetails) auth.getPrincipal());
+
+                request.setAttribute(JwtUtil.ACCESS_TOKEN_HEADER, newAccessToken);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                log.info("access token을 이용해서 인증 패스");
+            }else{
+                log.info("인증 실패 401 반환");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
         }
         log.info("jwtFilter 끝");

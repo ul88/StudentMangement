@@ -1,4 +1,4 @@
-package com.ul88.be.Jwt;
+package com.ul88.be.security;
 
 import com.ul88.be.dto.MemberDetails;
 import com.ul88.be.entity.MemberRole;
@@ -25,7 +25,8 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class JwtUtil {
     public static final String AUTHORIZATION_PREFIX = "Bearer ";
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String ACCESS_TOKEN_HEADER = "Access_Token";
+    public static final String REFRESH_TOKEN_HEADER = "Refresh_Token";
     public static final String SESSION_NAME = "jwt";
     private final Key key;
     private final Long accessExpiration;

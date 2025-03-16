@@ -21,5 +21,10 @@ public class Member {
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
-    private MemberRole role;
+    @Builder.Default
+    private MemberRole role = MemberRole.NOT_AUTHENTICATED;
+
+    public void changeRole(MemberRole role) {
+        this.role = role;
+    }
 }

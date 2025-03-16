@@ -1,13 +1,11 @@
 package com.ul88.be.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ul88.be.Jwt.JwtUtil;
 import com.ul88.be.dto.MemberDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -74,10 +72,10 @@ public class JwtUsernamePasswordAuthenticationFilter extends AbstractAuthenticat
         log.info("인증 완료");
         String accessToken = jwtUtil.generateAccessToken((MemberDetails) authResult.getPrincipal());
         String refreshToken = jwtUtil.generateRefreshToken((MemberDetails) authResult.getPrincipal());
-        HttpSession session = request.getSession();
-        session.setAttribute(JwtUtil.SESSION_NAME, refreshToken);
-        log.info("토큰 {}", accessToken);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, JwtUtil.AUTHORIZATION_PREFIX + accessToken);
+        log.info("access token : {}", accessToken);
+        log.info("refresh token : {}", refreshToken);
+        response.setHeader(JwtUtil.ACCESS_TOKEN_HEADER, JwtUtil.AUTHORIZATION_PREFIX + accessToken);
+        response.setHeader(JwtUtil.REFRESH_TOKEN_HEADER, JwtUtil.AUTHORIZATION_PREFIX + refreshToken);
     }
 
     protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
