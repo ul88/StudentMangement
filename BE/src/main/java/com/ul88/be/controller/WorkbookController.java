@@ -52,4 +52,9 @@ public class WorkbookController {
         workbookService.updateWorkbook(requestUpdateWorkbookDto);
         return ResponseEntity.ok("success");
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteWorkbook(@PathVariable Long id) {
+        return ResponseEntity.ok(workbookService.deleteWorkbook(id));
+    }
 }

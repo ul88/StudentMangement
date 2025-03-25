@@ -1,7 +1,10 @@
 package com.ul88.be.service;
 
+import com.ul88.be.dto.ProblemDto;
 import com.ul88.be.dto.RequestSaveStudentDto;
+import com.ul88.be.dto.ResponseStudentDto;
 import com.ul88.be.dto.StudentDto;
+import com.ul88.be.entity.Problem;
 import com.ul88.be.entity.Student;
 import com.ul88.be.exception.CustomException;
 import com.ul88.be.exception.ErrorCode;
@@ -47,10 +50,19 @@ public class StudentService {
 
     @Transactional
     public StudentDto getStudent(Long id){
+        Student entity = studentRepository.findById(id).orElseThrow(()
+            -> new CustomException(ErrorCode.PK_NOT_FOUND));
+        return StudentDto.fromEntity(entity);
+    }
+
+    @Transactional
+    public ResponseStudentDto getStudentWithProblem(Long id){
         Student entity = studentRepository.findById(id).orElseThrow(() ->
                 new CustomException(ErrorCode.PK_NOT_FOUND));
+        List<Problem> problemList = studentRepository.findByIdWithProblems(id);
+        List<ProblemDto> problemDtoList = problemList.stream().map(ProblemDto::fromEntity).toList();
 
-        return StudentDto.fromEntity(entity);
+        return ResponseStudentDto.fromEntity(StudentDto.fromEntity(entity), problemDtoList);
     }
 
     public void deleteStudent(Long id){
@@ -58,7 +70,4 @@ public class StudentService {
                 new CustomException(ErrorCode.PK_NOT_FOUND)));
     }
 
-    public boolean existsStudent(Long id){
-        return studentRepository.existsById(id);
-    }
 }

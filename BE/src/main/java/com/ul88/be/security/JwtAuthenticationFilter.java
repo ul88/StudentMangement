@@ -61,6 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 log.info("access token을 이용해서 인증 패스");
             }else{
+                if(request.getRequestURI().equals("/api/login")){
+                    log.info("로그인 요청을 보냈으므로 로그인 필터로 넘김");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
                 log.info("인증 실패 401 반환");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;

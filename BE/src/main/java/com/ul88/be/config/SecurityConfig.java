@@ -7,6 +7,7 @@ import com.ul88.be.service.MemberDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -50,9 +51,13 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/login").permitAll()
-                .requestMatchers("/api/signup").permitAll()
+                .requestMatchers("/api/logout").permitAll()
+                .requestMatchers("/api/logout").authenticated()
                 .requestMatchers("/api/admin").hasAnyRole("ADMIN")
-                .anyRequest().hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.POST).hasAnyRole("ADMIN","USER")
+                .requestMatchers(HttpMethod.PUT).hasAnyRole("ADMIN","USER")
+                .requestMatchers(HttpMethod.DELETE).hasAnyRole("ADMIN","USER")
+                .anyRequest().permitAll()
         );
         http.addFilterBefore(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(), jwtUtil), LogoutFilter.class);
         http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil,memberDetailsService), JwtUsernamePasswordAuthenticationFilter.class);

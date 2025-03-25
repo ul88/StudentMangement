@@ -67,4 +67,11 @@ public class WorkbookService {
         List<Problem> problemList = workbookRepository.findProblemByWorkbook(id);
         return problemList.stream().map(ProblemDto::fromEntity).toList();
     }
+
+    public WorkbookDto deleteWorkbook(Long id){
+        Workbook workbook = workbookRepository.findById(id).orElseThrow(()->
+                new CustomException(ErrorCode.PK_NOT_FOUND));
+        workbookRepository.delete(workbook);
+        return WorkbookDto.fromEntity(workbook);
+    }
 }

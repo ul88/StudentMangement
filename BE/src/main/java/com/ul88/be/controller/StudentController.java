@@ -21,19 +21,19 @@ public class StudentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getStudent(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().body(studentService.getStudent(id));
+        return ResponseEntity.ok().body(studentService.getStudentWithProblem(id));
     }
 
     @PostMapping // 입력
     public ResponseEntity<?> saveStudent(@RequestBody RequestSaveStudentDto studentDto) {
         studentService.saveStudent(studentDto);
-        return ResponseEntity.ok().body("success");
+        return ResponseEntity.ok().body(studentDto);
     }
 
     @PutMapping
     public ResponseEntity<?> updateProblems(@RequestBody StudentDto studentDto) {
         studentService.updateStudent(studentDto);
-        return ResponseEntity.ok().body("update");
+        return ResponseEntity.ok().body(studentDto);
     }
 
     @DeleteMapping("/{id}")

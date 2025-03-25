@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@ToString
+@ToString(exclude = {"managements"})
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
