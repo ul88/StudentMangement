@@ -47,6 +47,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 log.info("refresh token으로 access token 발급 완료");
+            }else{
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
         }else if(accessToken != null && accessToken.startsWith(JwtUtil.AUTHORIZATION_PREFIX)) {
             accessToken = accessToken.substring(7).trim();
@@ -56,7 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 String newAccessToken = JwtUtil.AUTHORIZATION_PREFIX +
                         jwtUtil.generateAccessToken((MemberDetails) auth.getPrincipal());
-
                 request.setAttribute(JwtUtil.ACCESS_TOKEN_HEADER, newAccessToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 log.info("access token을 이용해서 인증 패스");

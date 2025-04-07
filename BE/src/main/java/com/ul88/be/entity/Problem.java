@@ -26,5 +26,6 @@ public class Problem {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Management> managementList = new ArrayList<>();
 }

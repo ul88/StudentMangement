@@ -11,13 +11,21 @@ axios.interceptors.response.use(
     return response;
   },
   async (error) => {
-    if(error.response?.status == 401){
-      error.config.headers = {
-        Refresh_Token : localStorage.getItem("refresh_token")
+    if(error.response?.status === 401 && !error.config._retry){
+      error.config._retry = true
+      error.config.headers["Refresh_Token"] = localStorage.getItem("refresh_token");
+      console.log("retry값: ",error.config._retry);
+      try{
+        const response = await axios.request(error.config)
+        return response;
+      } catch (refreshError : any){
+        if(refreshError.response?.status === 401){
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          window.location.href="";
+        }
+        return Promise.reject(refreshError); 
       }
-
-      const response = await axios.request(error.config)
-      return response;
     }
     return Promise.reject(error);
   }
